@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Tarea 1</title>
+        <link rel="stylesheet" href="../css/styles.css">
+    </head>
+    <body>
+        <h1>Agregar actividades</h1>
+        <div class="main-container" id="main-form">
+            <form name="add_form" method="post" enctype="multipart/form-data">
+                <h2>¿Dónde?</h2>
+
+                <label for="select_region">Región</label>
+                <select name="Región" id="select_region" required>
+                    <option value="">Seleccione una región</option>
+                </select><br>
+
+                <label for="select_comuna">Comuna</label>
+                <select name="Comuna" id="select_comuna" required>
+                    <option value="">Seleccione una comuna</option>
+                </select><br>
+
+                <label for="input_sector">Sector</label>
+                <input type="text" name="Sector" id="input_sector" maxlength="100">
+
+                <h2>¿Quién organiza?</h2>
+
+                <label for="input_nombre">Nombre</label>
+                <input type="text" name="Nombre" id="input_nombre" maxlength="200" required>
+
+                <label for="input_email">Email</label>
+                <input type="email" name="Email" id="input_email" maxlength="100" required autocomplete="on">
+
+                <label for="input_cellphone_number">Número de celular</label>
+                <input type="text" name="Número de celular" id="input_cellphone_number" maxlength="10">
+
+                <label for="select_contact_means">Contactar por</label>
+                <select name="Contactar por" id="select_contact_means">
+                    <option value="">Seleccione un medio de contacto</option>
+                </select><br>
+
+                <div id="contact-detail-container" style="display: none;">
+                    <label for="contact_detail">ID de contacto o URL</label>
+                    <input type="text" name="contact_detail" id="contact_detail">
+                </div>
+
+                <h2>¿Cúando y de qué trata?</h2>
+
+                <label for="input_start_datetime">Día y hora de inicio</label>
+                <input type="datetime-local" name="Día hora de inicio" id="input_start_datetime">
+
+                <label for="input_end_datetime">Día y hora de término</label>
+                <input type="datetime-local" name="Día hora de término" id="input_end_datetime">
+
+                <label for="Comentario">Descripción:</label>
+                <textarea id="Comentario" name="input_comentario" cols="50" rows="10"></textarea>
+
+                <label for="tema">Tema:</label>
+                <select id="tema" name="tema" required>
+                    <option value="">Seleccione un tema</option>
+                    <option value="música">Música</option>
+                    <option value="deporte">Deporte</option>
+                    <option value="ciencias">Ciencias</option>
+                    <option value="religión">Religión</option>
+                    <option value="política">Política</option>
+                    <option value="tecnología">Tecnología</option>
+                    <option value="juegos">Juegos</option>
+                    <option value="baile">Baile</option>
+                    <option value="comida">Comida</option>
+                    <option value="otro">Otro</option>
+                </select>
+
+                <div id="otro-tema-container" style="display: none; margin-top: 10px;">
+                    <label for="otro-tema">Describa el tema:</label>
+                    <input type="text" id="otro-tema" name="otro-tema" maxlength="15">
+                </div>
+
+                <div id="image-inputs">
+                    <div class="image-input">
+                      <input type="file" name="image1" accept="image/*" required>
+                      <button type="button" name="button1" onclick="showNextInput(1)">Agregar otra foto</button>
+                    </div>
+                  
+                    <div class="image-input" style="display: none;">
+                      <input type="file" name="image2" accept="image/*">
+                      <button type="button" name="button2" onclick="showNextInput(2)">Agregar otra foto</button>
+                    </div>
+                  
+                    <div class="image-input" style="display: none;">
+                      <input type="file" name="image3" accept="image/*">
+                      <button type="button" name="button3" onclick="showNextInput(3)">Agregar otra foto</button>
+                    </div>
+                  
+                    <div class="image-input" style="display: none;">
+                      <input type="file" name="image4" accept="image/*">
+                      <button type="button" name="button4" onclick="showNextInput(4)">Agregar otra foto</button>
+                    </div>
+                  
+                    <div class="image-input" style="display: none;">
+                      <input type="file" name="image5" accept="image/*">
+                    </div>
+                </div>
+
+                <button type="button" id="confirmar-btn">Agregar esta actividad</button>
+
+            </form>
+        </div>
+
+        <div id="confirmacion-container" style="display: none;">
+            <p>¿Está seguro que desea agregar esta actividad?</p>
+            <button id="confirmar-si">Sí, estoy seguro</button>
+            <button id="confirmar-no">No, no estoy seguro, quiero volver al formulario</button>
+        </div>
+          
+        <div id="mensaje-final" style="display: none;">
+            <p>Hemos recibido su información, muchas gracias y suerte en su actividad</p>
+            <button onclick= "window.location.href='../html/home.html'">Volver</button>
+        </div>
+        
+        <script src="../js/region_comuna.js"></script>
+        <script src="../js/social_net.js"></script>
+        <script src="../js/validations.js"></script>
+        <script src="../js/agregar.js"></script>
+    </body>
+</html>
