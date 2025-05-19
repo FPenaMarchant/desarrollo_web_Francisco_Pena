@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Tarea 2</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    </head>
+    <body>
+        <div id="mensajeExito" style="color: green; font-weight: bold;"></div>
+        <h1>Bienvenido a la plataforma de actividades</h1>
+
+        <nav class="menu">
+            <ul>
+                <li><a href="{{ url_for('agregar_actividad') }}" class="menu-box">Agregar actividad</a></li>
+                <li><a href="{{ url_for('listado_actividades') }}" class="menu-box">Ver listado de actividades</a></li>
+                <li><a href="{{ url_for('estadisticas') }}" class="menu-box">Estadísticas</a></li>
+            </ul>
+        </nav>
+
+        <h2>Últimas 5 actividades registradas</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th><label>Inicio</label></th>
+                    <th><label>Término</label></th>
+                    <th><label>Comuna</label></th>
+                    <th><label>Sector</label></th>
+                    <th><label>Tema</label></th>
+                    <th><label>Foto</label></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for act in actividades %}
+                <tr>
+                    <td><time datetime="{{ act.dia_hora_inicio }}">{{ act.dia_hora_inicio }}</time></td>
+                    <td><time datetime="{{ act.dia_hora_termino }}">{{ act.dia_hora_termino }}</time></td>
+                    <td>{{ act.comuna.nombre }}</td>
+                    <td>{{ act.sector }}</td>
+                    <td> {% for tema in temas[act.id] %} 
+                        {% if tema[1] %}
+                        {{tema[1]}}
+                        {% else %}
+                        {{tema[0]}}
+                        {% endif %} 
+                        {% endfor %}</td>
+                    <td> {% for foto in fotos[act.id] %}
+                        <img src="{{ url_for('static', filename= 'imgs/' ~ foto[0]) }}"
+                            alt="Foto actividad {{ act.id }}"
+                            class="thumbnail">
+                            {% endfor %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <script>
+        const mensaje = localStorage.getItem("mensajeExito");
+        if (mensaje) {
+            const msgDiv = document.createElement("div");
+            msgDiv.textContent = mensaje;
+            msgDiv.style.color = "green";
+            msgDiv.style.fontWeight = "bold";
+            document.body.prepend(msgDiv);
+            localStorage.removeItem("mensajeExito");
+        }
+        </script>
+    </body>
+</html>
