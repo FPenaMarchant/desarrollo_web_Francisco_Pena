@@ -17,7 +17,7 @@ Una vez dentro de tarea2, correr en la terminal:
 $flask run
 Esto debería iniciar la tarea en el navegador predeterminado. 
 
-Las imágenes están configuradas para guardarse en la carpeta static/imgs, con el nombre y el índice de la actividad en la que están asociadas. Cambiarles el nombre rompe las dependencias y mi código no maneja esas situaciones ya que esto se encuentra fuera del contexto de la tarea. Agregué otra carpeta static/free_imgs con imágenes que generé mediante IA para utilizar en las pruebas. Están generadas a 800x600 px si no mal recuerdo. agregar imágenes de static/free_imgs las duplica en imgs, no las mueve. 
+Las imágenes están configuradas para guardarse en la carpeta static/imgs, con el nombre y el índice de la actividad en la que están asociadas. Cambiarles el nombre rompe las dependencias y mi código no maneja esas situaciones ya que esto se encuentra fuera del contexto de la tarea. Agregué otra carpeta static/free_imgs con imágenes que generé mediante IA para utilizar en las pruebas. Están generadas a 800x600 px si no mal recuerdo. Agregar imágenes de static/free_imgs las duplica en imgs, no las mueve. 
 
 Las actividades fueron testeadas para el thunder cross split attack o como sea que se llame.
 ![Screenshot (527)](https://github.com/user-attachments/assets/784a505c-8050-4a3c-8dae-3cf2b899332b)
