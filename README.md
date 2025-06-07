@@ -21,3 +21,9 @@ Las imágenes están configuradas para guardarse en la carpeta static/imgs, con 
 
 Las actividades fueron testeadas para el thunder cross split attack o como sea que se llame.
 ![Screenshot (527)](https://github.com/user-attachments/assets/784a505c-8050-4a3c-8dae-3cf2b899332b)
+
+## Update Tarea 3
+
+Me doy cuenta que no hablé acerca del secret key. Dentro de app.py hay una variable llamada app.secret key, que está seteada a "your_secret_key". Favor cambiar si es necesario hacerlo. Por lo demás, no mucho cambió desde la segunda tarea: la manera de correr el código sigue siendo la misma. 
+
+La librería elegida para generar los gráficos fue Highcharts.
