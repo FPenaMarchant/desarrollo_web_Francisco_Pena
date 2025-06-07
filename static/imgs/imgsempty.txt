@@ -1,0 +1,1 @@
+I made this to ensure static/imgs is created on github. I don't know if my code creates it automatically when inserting the first image.

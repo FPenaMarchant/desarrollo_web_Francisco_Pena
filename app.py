@@ -1,11 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
-from models import db, Actividad, Comuna, ActividadTema, Region, Foto, ContactarPor, actividadttodict
+from models import db, Actividad, Comuna, ActividadTema, Region, Foto, ContactarPor, actividadttodict, Comentario
 from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
 from flask import jsonify
 from validar2 import validar_formulario
 from datetime import datetime, timedelta
+from sqlalchemy import func
+from sqlalchemy.sql import extract, case
 
 UPLOAD_FOLDER = os.path.join(os.getcwd(), 'static', 'imgs')
 
@@ -119,7 +121,7 @@ def agregar_actividad():
 
     return render_template("agregar2.html", regiones=regiones, comunas=comunas, form_data=[])
 
-@app.route('/listado')
+@app.route('/listado', methods= ['GET', 'POST'])
 def listado_actividades():
     actividades = (
         db.session.query(Actividad)
@@ -128,17 +130,38 @@ def listado_actividades():
     )
     act_dict= [actividadttodict(a) for a in actividades]
     fotos_act_dict= {actividad.id: [{'nombre_archivo': nombre_archivo, 'actividad_id': actividad_id} for (nombre_archivo, actividad_id) in 
-                                    db.session.query(Foto.nombre_archivo, Foto.actividad_id).where(Foto.actividad_id == actividad.id).filter(Foto.actividad_id == actividad.id).all()]
+                                    db.session.query(Foto.nombre_archivo, Foto.actividad_id).filter(Foto.actividad_id == actividad.id).all()]
                                     for actividad in actividades}
     temas_act_dict= {actividad.id: [{'actividad_tema': actividad_tema, 'actividad_glosaotro': actividad_glosaotro} for (actividad_tema, actividad_glosaotro) in 
                                     db.session.query(ActividadTema.tema, ActividadTema.glosa_otro).filter(ActividadTema.actividad_id == actividad.id).all()] 
                                     for actividad in actividades}
     comunas_dict= {actividad.comuna.id: actividad.comuna.nombre for actividad in actividades}
+
+    if request.method == 'POST':
+        data = request.get_json()
+        nombre = data.get('nombre', '').strip()
+        texto = data.get('comentario', '').strip()
+        actividad_id = data.get('actividad_id')
+
+        errores = []
+        if not (3 <= len(nombre) <= 80):
+            errores.append("El nombre debe tener entre 3 y 80 caracteres.")
+        if len(texto) < 5:
+            errores.append("El comentario debe tener al menos 5 caracteres.")
+
+        if errores:
+            return jsonify({'errores': errores}), 400
+
+        nuevo_comentario = Comentario(nombre=nombre, texto=texto, actividad_id=actividad_id)
+        db.session.add(nuevo_comentario)
+        db.session.commit()
+        return jsonify({'mensaje': 'Comentario agregado exitosamente.'}), 200
+
     return render_template("listado2.html", actividades=act_dict, fotos= fotos_act_dict, temas= temas_act_dict, comunas= comunas_dict)
 
 @app.route('/estadisticas')
 def estadisticas():
-    return render_template("estadisticas.html")
+    return render_template("estadisticas2.html")
 
 @app.route('/api/comunas/<int:region_id>')
 def comunas_por_region(region_id):
@@ -148,6 +171,85 @@ def comunas_por_region(region_id):
         for comuna in comunas
     ]
     return jsonify(result)
+
+@app.route("/comentarios/<int:actividad_id>")
+def obtener_comentarios(actividad_id):
+    comentarios = (
+        db.session.query(Comentario)
+        .filter(Comentario.actividad_id == actividad_id)
+        .order_by(Comentario.fecha.desc())
+        .all()
+    )
+
+    return jsonify([
+        {
+            "nombre": c.nombre,
+            "texto": c.texto,
+            "fecha": c.fecha.isoformat()
+        }
+        for c in comentarios
+])
+
+@app.route("/api/actividades_por_dia")
+def actividades_por_dia():
+    resultados = (
+        db.session.query(func.date(Actividad.dia_hora_inicio), func.count())
+        .group_by(func.date(Actividad.dia_hora_inicio))
+        .order_by(func.date(Actividad.dia_hora_inicio))
+        .all()
+    )
+    data = [{"fecha": str(fecha), "cantidad": cantidad} for fecha, cantidad in resultados]
+    return jsonify(data)
+
+@app.route("/api/actividades_por_tema")
+def actividades_por_tema():
+    resultados = (
+        db.session.query(ActividadTema.tema, func.count())
+        .group_by(ActividadTema.tema)
+        .order_by(ActividadTema.tema)
+        .all()
+    )
+    data = [{"name": tema, "y": cantidad} for tema, cantidad in resultados]
+    return jsonify(data)
+
+@app.route("/api/actividades_por_franja")
+def actividades_por_franja():
+    franja = case(
+        (func.hour(Actividad.dia_hora_inicio).between(6, 11), 'mañana'),
+        (func.hour(Actividad.dia_hora_inicio).between(12, 16), 'mediodía'),
+        else_='tarde'
+    )
+
+    resultados = (
+        db.session.query(
+            extract('month', Actividad.dia_hora_inicio).label('mes'),
+            franja.label('franja'),
+            func.count().label('cantidad')
+        )
+        .group_by('mes', 'franja')
+        .order_by('mes', 'franja')
+        .all()
+    )
+
+    data_dict = {}
+    for mes, franja, cantidad in resultados:
+        mes = int(mes)
+        if mes not in data_dict:
+            data_dict[mes] = {'mañana': 0, 'mediodía': 0, 'tarde': 0}
+        data_dict[mes][franja] = cantidad
+
+    # Create lists for chart series
+    meses = [mes for mes in sorted(data_dict.keys())]
+    manana = [data_dict[mes]['mañana'] for mes in meses]
+    medio = [data_dict[mes]['mediodía'] for mes in meses]
+    tarde = [data_dict[mes]['tarde'] for mes in meses]
+
+    return jsonify({
+        "meses": meses,
+        "mañana": manana,
+        "mediodía": medio,
+        "tarde": tarde
+    })
 
 if __name__ == '__main__':
     app.run(debug=True)

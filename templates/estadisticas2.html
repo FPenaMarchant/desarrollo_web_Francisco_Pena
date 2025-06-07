@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estadísticas de Actividades</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+</head>
+<body>
+  <h1>Estadísticas de Actividades</h1>
+
+  <section>
+    <h2>Actividades por Día</h2>
+    <div id="contenedorGrafico" style="width: 100%; height: 400px;"></div>
+  </section>
+
+  <section>
+    <h2>Actividades por Tipo</h2>
+    <div id="graficoTorta" style="width: 100%; height: 400px;"></div>
+  </section>
+
+  <section>
+    <h2>Actividades por Horario y Mes</h2>
+    <div id="graficoFranja" style="width: 100%; height: 500px;"></div>
+  </section>
+
+  <footer>
+    <button class="boton" onclick="window.location.href='/'">Volver a la portada</button>
+  </footer>
+  <script src="{{ url_for('static', filename='js/estadisticas.js') }}"></script>
+</body>
+</html>
