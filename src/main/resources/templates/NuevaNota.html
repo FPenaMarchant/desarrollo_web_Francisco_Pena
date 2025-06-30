@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Agregar Nota</title>
+</head>
+<body>
+    <h1>Agregar Nota a Actividad #[[${actividadId}]]</h1>
+
+    <form onsubmit="event.preventDefault(); guardarNota();">
+        <input type="hidden" id="actividadId" th:value="${actividadId}" />
+        <label for="nota">Nota:</label>
+        <input type="text" id="nota" name="nota" required />
+        <button type="submit">Guardar</button>
+    </form>
+
+    <p id="error" style="color:red;"></p>
+    
+    <a th:href="@{/resumen}">Volver a resumen</a>
+
+</body>
+<script src="/js/guardarNota.js"></script>
+</html>
